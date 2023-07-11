@@ -1,0 +1,10 @@
+- hosts: all
+
+  collections:
+  - name: amazon.aws
+
+  tasks:
+    - name: create a public zone
+      amazon.aws.route53_zone:
+        zone: mycustomezone.com
+        comment: Example zone
