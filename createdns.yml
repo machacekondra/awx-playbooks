@@ -6,5 +6,5 @@
   tasks:
     - name: create a public zone
       amazon.aws.route53_zone:
-        zone: mycustomezone.com
-        comment: Example zone
+        zone: "{{ cluster_deployment.baseDomain | default('example.com') }}"
+        comment: Cluster deployment zone
