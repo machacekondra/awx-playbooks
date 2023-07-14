@@ -2,7 +2,7 @@
 
   tasks:
     - name: Spawn machine
-      ansible.builtin.shell: somescript.sh
+      ansible.builtin.shell: /root/webapp/host_scripts/create_vms_from_iso_path.sh
       environment:
         URL: "{{ url }}"
         PREFIX: om
