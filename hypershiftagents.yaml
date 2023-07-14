@@ -12,7 +12,6 @@
   tasks:
     - name: Wait till the Object is created
       kubernetes.core.k8s_info:
-        kubeconfig: /home/omachace/.kube/config
         kind: Agent
         api_version: "agent-install.openshift.io/v1beta1"
         namespace: agent-infra
@@ -24,7 +23,6 @@
 
     - name: Approve hosts
       kubernetes.core.k8s:
-        kubeconfig: /home/omachace/.kube/config
         state: patched
         kind: Agent
         api_version: "agent-install.openshift.io/v1beta1"
