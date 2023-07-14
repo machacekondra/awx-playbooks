@@ -1,0 +1,9 @@
+- hosts: all
+
+  tasks:
+    - name: Spawn machine
+      ansible.builtin.shell: somescript.sh
+      environment:
+        URL: "{{ url }}"
+        PREFIX: om
+        NUM_OF_NODES: 3
