@@ -2,4 +2,6 @@
 
   tasks:
     - name: Spawn machine
-      ansible.builtin.shell: "/root/webapp/host_scripts/create_vms_from_iso_path.sh {{ url }} 3 om"
+      ansible.builtin.shell: 
+        cmd: /root/webapp/host_scripts/create_vms_from_iso_path.sh
+        argv: "{{ url }} 3 om"
