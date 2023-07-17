@@ -2,7 +2,7 @@
 
   tasks:
     - name: Spawn machine
-      ansible.builtin.command: "sh /root/webapp/host_scripts/create_vms_from_iso_path.sh '{{ url }}' 1 om"
+      ansible.builtin.command: "sh /root/webapp/host_scripts/create_vms_from_iso_path.sh '{{ url }}' 3 om"
 
 - hosts: localhost
 
@@ -16,7 +16,7 @@
         api_version: "agent-install.openshift.io/v1beta1"
         namespace: agent-infra
       register: agents
-      until: "agents.resources | default([]) | length >= 1"
+      until: "agents.resources | default([]) | length >= 3"
       delay: 20
       retries: 25
       ignore_errors: True
