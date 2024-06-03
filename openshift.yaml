@@ -1,0 +1,93 @@
+- name: Deploy info about vmware system
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Install collection kubernetes.core
+      community.general.ansible_galaxy_install:
+        type: collection
+        name: kubernetes.core
+
+    - name: Create config map with fetched VMware data
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: vmware-viewer
+            namespace: default
+          data:
+            data.json: "{{ __apliances.results | map(attribute='appliance') | to_json }}"
+        apply: yes
+
+    - name: Create deployment with vmware data
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            labels:
+              app: vmware-viewer
+            name: vmware-viewer
+            namespace: default
+          spec:
+            replicas: 2
+            selector:
+              matchLabels:
+                app: vmware-viewer
+            template:
+              metadata:
+                labels:
+                  app: vmware-viewer
+              spec:
+                volumes:
+                  - name: config-volume
+                    configMap:
+                      name: vmware-viewer
+                containers:
+                  - image: quay.io/machacekondra/vmware_viewer
+                    imagePullPolicy: Always
+                    name: vmware-viewer
+                    ports:
+                      - containerPort: 80
+                    volumeMounts:
+                      - name: config-volume
+                        mountPath: /usr/share/nginx/html/data
+
+    - name: Create service for vmware data app
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: vmware-viewer
+            namespace: default
+          spec:
+            selector:
+              app: vmware-viewer
+            ports:
+              - protocol: TCP
+                port: 80
+                targetPort: 80
+    
+    - name: Create route for vmware data app
+      kubernetes.core.k8s:
+        definition:
+          kind: Route
+          apiVersion: route.openshift.io/v1
+          metadata:
+            name: vmware-viewer
+            namespace: default
+            labels: {}
+          spec:
+            to:
+              kind: Service
+              name: vmware-viewer
+            tls: null
+            port:
+              targetPort: 80
+      register: __route
+    
+    - name: Print route
+      ansible.builtin.debug:
+        msg: "VMware viewer application URL is: http://{{ __route.result.spec.host | d('') }}"
