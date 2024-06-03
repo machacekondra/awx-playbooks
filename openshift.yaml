@@ -2,12 +2,10 @@
   hosts: all
   gather_facts: false
 
-  tasks:
-    - name: Install collection kubernetes.core
-      community.general.ansible_galaxy_install:
-        type: collection
-        name: kubernetes.core
+  roles:
+    - role: cloud.vmware_ops.info
 
+  post_tasks:
     - name: Create config map with fetched VMware data
       kubernetes.core.k8s:
         definition:
@@ -17,7 +15,7 @@
             name: vmware-viewer
             namespace: default
           data:
-            data.json: "{{ __apliances.results | map(attribute='appliance') | to_json }}"
+            data.json: "{{ lookup('file', info_appliance_file) | to_json }}"
         apply: yes
 
     - name: Create deployment with vmware data
