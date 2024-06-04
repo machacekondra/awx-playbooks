@@ -47,10 +47,10 @@
                     imagePullPolicy: Always
                     name: vmware-viewer
                     ports:
-                      - containerPort: 80
+                      - containerPort: 3000
                     volumeMounts:
                       - name: config-volume
-                        mountPath: /usr/share/nginx/html/data
+                        mountPath: /usr/src/app/src/data
 
     - name: Create service for vmware data app
       kubernetes.core.k8s:
@@ -65,8 +65,8 @@
               app: vmware-viewer
             ports:
               - protocol: TCP
-                port: 80
-                targetPort: 80
+                port: 3000
+                targetPort: 3000
     
     - name: Create route for vmware data app
       kubernetes.core.k8s:
@@ -83,7 +83,7 @@
               name: vmware-viewer
             tls: null
             port:
-              targetPort: 80
+              targetPort: 3000
       register: __route
     
     - name: Print route
