@@ -15,7 +15,7 @@
             name: vmware-viewer
             namespace: default
           data:
-            data.json: "{{ lookup('file', info_appliance_file) | to_json }}"
+            data.json: "{{ __appliance.appliance | to_json }}"
         apply: yes
 
     - name: Create deployment with vmware data
